@@ -14,6 +14,7 @@ def apiHome(req):
     elif req.method == 'POST':
         data = req.data
         ser = StudentSerializer(data = data)
+        # if ser.is_valid():
         if ser.is_valid(raise_exception=True):
             ser.save()
             print(ser.data) 
