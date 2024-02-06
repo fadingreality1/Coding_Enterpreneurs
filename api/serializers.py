@@ -48,4 +48,9 @@ class StudentSerializer(serializers.ModelSerializer):
         except:
             return None
         
+
+class TestStudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = '__all__'
     

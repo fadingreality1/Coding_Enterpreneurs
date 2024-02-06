@@ -21,4 +21,7 @@ from . import views
 
 urlpatterns = [
     path('', views.apiHome),
+    # path('<int:id>/', views.studentDetails),
+    path('<int:id>/', views.StudentDetailAPIView.as_view()),
+    path('create/', views.StudentCreateAPIView.as_view()),
 ]
