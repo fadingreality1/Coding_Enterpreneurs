@@ -24,4 +24,7 @@ urlpatterns = [
     # path('<int:id>/', views.studentDetails),
     path('<int:id>/', views.StudentDetailAPIView.as_view()),
     path('create/', views.StudentCreateAPIView.as_view()),
+    path('list/', views.StudentListAPIView.as_view()),
+    path('list-create/', views.StudentListCreateAPIView.as_view()),  
+    path('books/', views.bookList),
 ]

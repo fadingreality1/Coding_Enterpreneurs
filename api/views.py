@@ -70,7 +70,47 @@ class StudentCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         print(serializer.validated_data)
         # ! if super() method is not used, below method is saved
-        serializer.save(name="from perbghvhjuyuyuykvhjvhjvbjhbjhbform_create method")
+        # serializer.save(name="from perbghvhjuyuyuykvhjvhjvbjhbjhbform_create method")
         return super().perform_create(serializer)
     
+class StudentListAPIView(generics.ListAPIView):
     
+    """
+    Use ListCreateView instead of upper-two
+    
+    can create as well as return list.
+    
+    """
+    queryset = Student.objects.all()
+    
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return TestStudentSerializer
+        else:
+            return StudentSerializer
+        
+class StudentListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Student.objects.all()
+    
+    def get_serializer_class(self):
+        if self.request.user.is_authenticated:
+            return TestStudentSerializer
+        else:
+            return StudentSerializer
+        
+        
+@api_view(['GET', 'POST'])
+def bookList(req):
+    if req.method == 'GET':
+        books = Book.objects.all()
+        if len(books) == 0:
+            return Response({})
+        serialized_books = BookSerializer(books, many = True)
+        return Response(serialized_books.data)
+    if req.method == 'POST':
+        data = req.data
+        serialized_data = BookSerializer(data = data)
+        if serialized_data.is_valid(raise_exception = True):
+            serialized_data.save()
+            return Response(serialized_data.data)
+        return Response({})

@@ -1,7 +1,7 @@
 from django.db import models
 
 class Student(models.Model):
-    name = models.CharField(max_length = 255, null = False)
+    name = models.CharField(max_length = 255, null = False, default = 'John doe')
     age = models.IntegerField( null = False)
     
     @property
@@ -14,3 +14,12 @@ class Student(models.Model):
     
     def __str__(self):
         return f'{self.name}  {self.age}'
+    
+
+class Book(models.Model):
+    name = models.CharField(max_length = 255, null = False)
+    price = models.IntegerField(default = 100, null = False)
+    
+    @property
+    def writer(self):
+        return 'Kunal verma'
