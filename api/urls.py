@@ -28,5 +28,7 @@ urlpatterns = [
     path('list-create/', views.StudentListCreateAPIView.as_view()),  
     path('books/', views.bookList),
     path('all-in-one-for-student/', views.allInOneForStudent),
-    path('all-in-one-for-student/<int:id>', views.allInOneForStudent),
+    path('all-in-one-for-student/<int:id>/', views.allInOneForStudent),
+    path('student/<int:id>/update', views.UpdateStudentAPIView.as_view()),
+    path('student/<int:id>/delete/', views.DeleteStudentAPIView.as_view()),
 ]

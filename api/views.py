@@ -130,7 +130,7 @@ def allInOneForStudent(req, id = None,  *args):
             return Response(serialized_data)
         # for list
         students = Student.objects.all()
-        serialized_students = StudentSerializer(students, many = True)
+        serialized_students = TestStudentSerializer(students, many = True)
         return Response(serialized_students.data)
         
     elif req.method == 'POST':
@@ -139,3 +139,15 @@ def allInOneForStudent(req, id = None,  *args):
         if serialized_data.is_valid(raise_exception=True):
             serialized_data.save()
             return Response(serialized_data.data)
+        
+        
+class DeleteStudentAPIView(generics.DestroyAPIView):
+    queryset = Student.objects.all()
+    lookup_field = 'id'
+    
+    
+class UpdateStudentAPIView(generics.UpdateAPIView):
+    queryset = Student.objects.all()
+    lookup_field = 'id'
+    serializer_class = StudentSerializer
+    
