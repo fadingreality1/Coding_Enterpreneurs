@@ -2,7 +2,7 @@ from django.db import models
 
 class Student(models.Model):
     name = models.CharField(max_length = 255, null = False, default = 'John doe')
-    age = models.IntegerField( null = False)
+    age = models.IntegerField(null = False)
     
     @property
     def father(self):
@@ -23,3 +23,6 @@ class Book(models.Model):
     @property
     def writer(self):
         return 'Kunal verma'
+    
+    def __str__(self):
+        return f'{self.name}'

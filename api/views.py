@@ -68,7 +68,6 @@ class StudentCreateAPIView(generics.CreateAPIView):
     serializer_class = TestStudentSerializer
     
     def perform_create(self, serializer):
-        print(serializer.validated_data)
         # ! if super() method is not used, below method is saved
         # serializer.save(name="from perbghvhjuyuyuykvhjvhjvbjhbjhbform_create method")
         return super().perform_create(serializer)
@@ -114,3 +113,29 @@ def bookList(req):
             serialized_data.save()
             return Response(serialized_data.data)
         return Response({})
+    return Response({})
+    
+    
+            
+# ! Creating functional based view that does exactly what these above Class based views have done
+
+@api_view(['GET', 'POST'])
+def allInOneForStudent(req, id = None,  *args):
+    # For list and details view
+    if req.method == 'GET':
+        # For Detail
+        if id != None:
+            student_details = get_object_or_404(Student, id = id)
+            serialized_data = StudentSerializer(student_details, many = False).data
+            return Response(serialized_data)
+        # for list
+        students = Student.objects.all()
+        serialized_students = StudentSerializer(students, many = True)
+        return Response(serialized_students.data)
+        
+    elif req.method == 'POST':
+        # For creation 
+        serialized_data = StudentSerializer(data = req.data)
+        if serialized_data.is_valid(raise_exception=True):
+            serialized_data.save()
+            return Response(serialized_data.data)
