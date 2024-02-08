@@ -29,6 +29,11 @@ urlpatterns = [
     path('books/', views.bookList),
     path('all-in-one-for-student/', views.allInOneForStudent),
     path('all-in-one-for-student/<int:id>/', views.allInOneForStudent),
-    path('student/<int:id>/update', views.UpdateStudentAPIView.as_view()),
+    path('student/<int:id>/update/', views.UpdateStudentAPIView.as_view()),
     path('student/<int:id>/delete/', views.DeleteStudentAPIView.as_view()),
+    path('student/all-in-one-using-mixins/', views.AllInOneForStudentWithMixin.as_view()),
+    path('student/all-in-one-using-mixins/create/', views.AllInOneForStudentWithMixin.as_view()),
+    path('student/all-in-one-using-mixins/detail/<int:id>/', views.AllInOneForStudentWithMixin.as_view()),
+    path('student/all-in-one-using-mixins/update/<int:id>/', views.AllInOneForStudentWithMixin.as_view()),
+    path('student/all-in-one-using-mixins/destroy/<int:id>/', views.AllInOneForStudentWithMixin.as_view()),
 ]

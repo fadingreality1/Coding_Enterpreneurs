@@ -3,7 +3,8 @@ from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from .models import *
 from .serializers import *
-
+from rest_framework import generics
+from rest_framework.mixins import *
 
 @api_view(['GET', 'POST'])
 def apiHome(req):
@@ -32,11 +33,6 @@ def studentDetails(req, id):
 
 
 # ! Django restframework generic views:
-
-
-from rest_framework import generics
-from .models import *
-
 
 class StudentDetailAPIView(generics.RetrieveAPIView):
     # ? specifying which quesry set to be transferred
@@ -141,13 +137,89 @@ def allInOneForStudent(req, id = None,  *args):
             return Response(serialized_data.data)
         
         
+# ! creating Class based api views for update and delete
+
 class DeleteStudentAPIView(generics.DestroyAPIView):
     queryset = Student.objects.all()
     lookup_field = 'id'
+    
+    # ! use when needed only
+    def perform_destroy(self, instance):
+        return super().perform_destroy(instance)
     
     
 class UpdateStudentAPIView(generics.UpdateAPIView):
     queryset = Student.objects.all()
     lookup_field = 'id'
     serializer_class = StudentSerializer
+    
+    # ! use when neede only
+    def perform_update(self, serializer):
+        return super().perform_update(serializer)
+    
+# ! Using mixins
+
+class AllInOneForStudentWithMixin(
+    ListModelMixin,
+    CreateModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+    DestroyModelMixin,
+    generics.GenericAPIView,
+    ):
+    
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    lookup_field = 'id'
+    # For List View
+    def get(self, request,*args, **kwargs):
+        
+        # ! if we want to use retrieve model mixin in one route with list model mixin, we shall use kwargs.
+        
+        id = kwargs.get('id')
+        if id:
+            #?  Using different serializer for detail requests
+            self.serializer_class = StudentSerializer
+            return self.retrieve(request, *args, **kwargs)
+            
+        return self.list(request, *args, **kwargs)
+    
+    # For Create View
+    def post(self, request, *args, **kwargs):
+        
+        #? This function calls for perform_create() method
+        
+        return self.create(request, *args, **kwargs)
+    
+    def perform_create(self, serializer):
+        print('\n\n Was it called??\n\n')
+        serializer.save()
+        # ! or use below line instead of above 
+        # return super().perform_create(serializer)
+        
+        
+    
+    def patch(self, request, *args, **kwargs):
+        
+        # ? this method calls for perform_update method
+        
+        #! For partial updtion [not all fields are required]
+        return self.partial_update(request, *args, **kwargs)
+        #! For partial updtion [all fields are required]
+        return self.update(request, *args, **kwargs)
+    
+    def perform_update(self, serializer):
+        print('\n\n was i called for update \n\n??')
+        # return super().perform_update(serializer)
+        serializer.save()
+        
+    def delete(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+    
+        
+    
+
+        
+    
+    
     

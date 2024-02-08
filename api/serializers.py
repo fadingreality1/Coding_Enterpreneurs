@@ -8,6 +8,7 @@ class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = [
+            'id', # ! should be avoided when transferring data outside.
             'name',
             'age',
             'my_father',
