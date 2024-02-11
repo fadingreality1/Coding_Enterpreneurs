@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from .models import *
 from .serializers import *
-from rest_framework import generics
+from rest_framework import generics, permissions, authentication
 from rest_framework.mixins import *
 
 @api_view(['GET', 'POST'])
@@ -159,6 +159,8 @@ class UpdateStudentAPIView(generics.UpdateAPIView):
     
 # ! Using mixins
 
+# ! we should avoid doing all stuff with single view, it poses security threat as every task is identified on the bases of request.method, not the url of route, so we can accidently delete something when list route is send with METHOD == DELETE.
+
 class AllInOneForStudentWithMixin(
     ListModelMixin,
     CreateModelMixin,
@@ -166,11 +168,20 @@ class AllInOneForStudentWithMixin(
     UpdateModelMixin,
     DestroyModelMixin,
     generics.GenericAPIView,
+    
     ):
     
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     lookup_field = 'id'
+    
+    # ? permissions and authentication
+    
+    
+    authentication_classes = [authentication.SessionAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.DjangoModelPermissions]
+    
     # For List View
     def get(self, request,*args, **kwargs):
         
@@ -190,7 +201,8 @@ class AllInOneForStudentWithMixin(
         #? This function calls for perform_create() method
         
         return self.create(request, *args, **kwargs)
-    
+
+
     def perform_create(self, serializer):
         print('\n\n Was it called??\n\n')
         serializer.save()
@@ -205,7 +217,7 @@ class AllInOneForStudentWithMixin(
         
         #! For partial updtion [not all fields are required]
         return self.partial_update(request, *args, **kwargs)
-        #! For partial updtion [all fields are required]
+        #! For complete updtion [all fields are required]
         return self.update(request, *args, **kwargs)
     
     def perform_update(self, serializer):
