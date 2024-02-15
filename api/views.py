@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from .models import *
 from .serializers import *
-from rest_framework import generics, permissions, authentication
+from rest_framework import (generics, permissions, authentication)
 from rest_framework.mixins import *
 
 @api_view(['GET', 'POST'])
@@ -58,6 +58,13 @@ class StudentDetailAPIView(generics.RetrieveAPIView):
         else:
             return StudentSerializer
         
+        
+    # ! Permissions and authentications
+    
+    permission_classes = [permissions.IsAuthenticated]
+    
+    
+        
 # ! Create API view
 class StudentCreateAPIView(generics.CreateAPIView):
     queryset = Student.objects.all()
@@ -86,6 +93,15 @@ class StudentListAPIView(generics.ListAPIView):
         
 class StudentListCreateAPIView(generics.ListCreateAPIView):
     queryset = Student.objects.all()
+    
+    # ! Permissions and authentications
+    
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    
+    # ! we cannot use session authentication with clients such as thiunder client as no session is created for them
+    # authentication_classes = [authentication.SessionAuthentication]
+    
     
     def get_serializer_class(self):
         if self.request.user.is_authenticated:
@@ -178,7 +194,7 @@ class AllInOneForStudentWithMixin(
     # ? permissions and authentication
     
     
-    authentication_classes = [authentication.SessionAuthentication]
+    # authentication_classes = [authentication.SessionAuthentication]
     # permission_classes = [permissions.IsAuthenticated]
     # permission_classes = [permissions.DjangoModelPermissions]
     
