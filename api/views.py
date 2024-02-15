@@ -5,6 +5,7 @@ from .models import *
 from .serializers import *
 from rest_framework import (generics, permissions, authentication)
 from rest_framework.mixins import *
+from .permissions import *
 
 @api_view(['GET', 'POST'])
 def apiHome(req):
@@ -243,6 +244,28 @@ class AllInOneForStudentWithMixin(
         
     def delete(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
+    
+    
+class SomeRandom(
+    generics.UpdateAPIView,
+    generics.ListCreateAPIView
+):
+    queryset = SomeRandomTesting.objects.all()
+    lookup_field = 'id'
+    serializer_class = SomeRandomSerializer
+    
+    permission_classes = [IsOwnerPermission]
+    
+    # def get(self, request):
+    #     print("___________________________________________________")
+    #     return 
+    
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+        
+    def perform_update(self, serializer):
+        serializer.save(owner=self.request.user)
+    
     
         
     

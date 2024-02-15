@@ -61,3 +61,16 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = '__all__'
     
+    
+    
+class SomeRandomSerializer(serializers.ModelSerializer):
+    
+    owner = serializers.SerializerMethodField(method_name='get_owner')
+    
+    class Meta:
+        model = SomeRandomTesting
+        fields = ['id', 'name', 'owner']
+        depth = 2
+        
+    def get_owner(self, obj):
+        return obj.owner.username
