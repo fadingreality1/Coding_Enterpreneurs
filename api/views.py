@@ -6,6 +6,7 @@ from .serializers import *
 from rest_framework import (generics, permissions, authentication)
 from rest_framework.mixins import *
 from .permissions import *
+from .authentication import *
 
 @api_view(['GET', 'POST'])
 def apiHome(req):
@@ -255,6 +256,7 @@ class SomeRandom(
     serializer_class = SomeRandomSerializer
     
     permission_classes = [IsOwnerPermission]
+    authentication_classes = [TokenAuthenticationAugmented]
     
     # def get(self, request):
     #     print("___________________________________________________")
