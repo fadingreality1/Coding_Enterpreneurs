@@ -83,6 +83,7 @@ class StudentCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         # ! if super() method is not used, below method is saved
         # serializer.save(name="from perbghvhjuyuyuykvhjvhjvbjhbjhbform_create method")
+        print(self.request)
         return super().perform_create(serializer)
     
 class StudentListAPIView(generics.ListAPIView):

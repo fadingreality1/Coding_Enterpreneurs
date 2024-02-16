@@ -1,5 +1,6 @@
 from rest_framework import serializers, reverse
 from .models import *
+from .validators import *
 
 class StudentSerializer(serializers.ModelSerializer):
     my_father = serializers.SerializerMethodField(read_only=True)
@@ -10,6 +11,10 @@ class StudentSerializer(serializers.ModelSerializer):
         lookup_field = 'id',
     )
 
+    #? External validators 
+    age = serializers.IntegerField(validators=[validate_age])
+    name = serializers.CharField(validators=[unique_name])
+    
     class Meta:
         model = Student
         fields = [
@@ -55,7 +60,30 @@ class StudentSerializer(serializers.ModelSerializer):
         except:
             return None
         
+    def create(self, validated_data):
+        return super().create(validated_data)
         
+    def save(self, **kwargs):
+        return super().save(**kwargs)
+    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+    
+    
+    def validate(self, attrs):
+        print("validation successfull")
+        return super().validate(attrs)
+    
+    # ! attribute level validation
+    # def validate_age(self, value):
+    #     if(value < 18):
+    #         raise serializers.ValidationError("age must be greater than 18.") 
+    #     return value
+        
+    
+    
+    # def create(self, validated_data):
+        # return super().create(validated_data)
     # def get_url(self, obj):
     #     return reverse.reverse("student-detail", kwargs={"id": obj.id}, request=self.context.get('request'))
     
