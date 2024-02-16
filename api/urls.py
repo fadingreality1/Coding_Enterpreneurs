@@ -38,7 +38,7 @@ urlpatterns = [
     path('student/all-in-one-using-mixins/update/<int:id>/', views.AllInOneForStudentWithMixin.as_view()),
     path('student/all-in-one-using-mixins/destroy/<int:id>/', views.AllInOneForStudentWithMixin.as_view()),
     path('some-random/', views.SomeRandom.as_view()),
-    path('some-random/<int:id>/detail/', views.SomeRandom.as_view(), name='some-random'),
+    path('some-random/<int:id>/detail/', views.SomeRandomDetails.as_view(), name='some-random'),
     path('some-random/<int:id>/delete/', views.SomeRandom.as_view()),
     path('some-random/create/', views.SomeRandom.as_view()),
     path('some-random/<int:id>/update/', views.SomeRandom.as_view()),

@@ -267,7 +267,11 @@ class SomeRandom(
     generics.UpdateAPIView,
     generics.ListCreateAPIView
 ):
-    queryset = SomeRandomTesting.objects.all()
+    
+    def get_queryset(self):
+        return SomeRandomTesting.objects.filter(owner = self.request.user)
+    
+    
     serializer_class = SomeRandomSerializer
     
     permission_classes = [IsOwnerPermission]
@@ -282,6 +286,18 @@ class SomeRandom(
         
     def perform_update(self, serializer):
         serializer.save(owner=self.request.user)
+        
+
+class SomeRandomDetails(generics.RetrieveAPIView):
+    queryset = SomeRandomTesting.objects.all()
+    lookup_field = 'id'
+    
+    serializer_class = SomeRandomSerializer
+    
+    permission_classes = [IsOwnerPermission]
+    authentication_classes = [TokenAuthenticationAugmented]
+    
+    
     
     
         

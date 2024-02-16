@@ -119,11 +119,13 @@ class SomeRandomSerializer(serializers.ModelSerializer):
     
     owner = serializers.SerializerMethodField(method_name='get_owner')
     url = serializers.SerializerMethodField(method_name='get_url')
+    name = serializers.CharField(validators=[unique_name])
+    
     
     class Meta:
         model = SomeRandomTesting
         fields = ['id', 'name', 'owner', 'url']
-        depth = 2
+        # depth = 2
         
     def get_owner(self, obj):
         return obj.owner.username
