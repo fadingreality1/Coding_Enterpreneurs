@@ -12,12 +12,12 @@ from .authentication import *
 def apiHome(req):
     if req.method == 'GET':
         instance = Student.objects.all()
-        instance = StudentSerializer(instance, many= True)
+        instance = StudentSerializer(instance, many= True, context={'request': req})
         return Response(instance.data, status=200) 
     
     elif req.method == 'POST':
         data = req.data
-        ser = StudentSerializer(data = data)
+        ser = StudentSerializer(data = data,context={'request': req})
         # if ser.is_valid():
         if ser.is_valid(raise_exception=True):
             ser.save()
@@ -65,12 +65,20 @@ class StudentDetailAPIView(generics.RetrieveAPIView):
     
     permission_classes = [permissions.IsAuthenticated]
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['request'] = self.request
+        return context
+    
     
         
 # ! Create API view
 class StudentCreateAPIView(generics.CreateAPIView):
     queryset = Student.objects.all()
     serializer_class = TestStudentSerializer
+    
+
+    
     
     def perform_create(self, serializer):
         # ! if super() method is not used, below method is saved
@@ -112,22 +120,29 @@ class StudentListCreateAPIView(generics.ListCreateAPIView):
             return StudentSerializer
         
         
+# ! context has been added because of hyperlinkIdentityrelated field
+        
 @api_view(['GET', 'POST'])
 def bookList(req):
     if req.method == 'GET':
         books = Book.objects.all()
         if len(books) == 0:
             return Response({})
-        serialized_books = BookSerializer(books, many = True)
+        serialized_books = BookSerializer(books, many = True, context={'request': req})
         return Response(serialized_books.data)
     if req.method == 'POST':
         data = req.data
-        serialized_data = BookSerializer(data = data)
+        serialized_data = BookSerializer(data = data, context={'request': req})
         if serialized_data.is_valid(raise_exception = True):
             serialized_data.save()
             return Response(serialized_data.data)
         return Response({})
     return Response({})
+    
+@api_view(['GET'])
+def bookDetail(req, id):
+    data = BookSerializer(get_object_or_404(Book, id=id), many = False, context={'request': req})
+    return Response(data.data)
     
     
             
@@ -252,7 +267,6 @@ class SomeRandom(
     generics.ListCreateAPIView
 ):
     queryset = SomeRandomTesting.objects.all()
-    lookup_field = 'id'
     serializer_class = SomeRandomSerializer
     
     permission_classes = [IsOwnerPermission]

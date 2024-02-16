@@ -1,13 +1,19 @@
-from rest_framework import serializers
+from rest_framework import serializers, reverse
 from .models import *
 
 class StudentSerializer(serializers.ModelSerializer):
     my_father = serializers.SerializerMethodField(read_only=True)
     some_random_shit = serializers.SerializerMethodField(read_only=True)
+    # url = serializers.SerializerMethodField(read_only = True)
+    url = serializers.HyperlinkedIdentityField(
+        view_name="student-detail",
+        lookup_field = 'id',
+    )
 
     class Meta:
         model = Student
         fields = [
+            'url',
             'id', # ! should be avoided when transferring data outside.
             'name',
             'age',
@@ -49,6 +55,11 @@ class StudentSerializer(serializers.ModelSerializer):
         except:
             return None
         
+        
+    # def get_url(self, obj):
+    #     return reverse.reverse("student-detail", kwargs={"id": obj.id}, request=self.context.get('request'))
+    
+        
 
 class TestStudentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,20 +68,37 @@ class TestStudentSerializer(serializers.ModelSerializer):
         
         
 class BookSerializer(serializers.ModelSerializer):
+    
+    # url = serializers.SerializerMethodField(method_name='get_url')
+    
+    # ! preferred way
+    
+    url = serializers.HyperlinkedIdentityField(
+        view_name='book-detail',
+        lookup_field = 'id',
+    )
+    
     class Meta:
         model = Book
-        fields = '__all__'
+        fields = ['name', 'price', 'writer', 'id', 'url',]
+        
+    # def get_url(self, obj):
+    #     return reverse.reverse('book-detail', kwargs={'id': obj.id}, request=self.context.get('request'))
     
     
     
 class SomeRandomSerializer(serializers.ModelSerializer):
     
     owner = serializers.SerializerMethodField(method_name='get_owner')
+    url = serializers.SerializerMethodField(method_name='get_url')
     
     class Meta:
         model = SomeRandomTesting
-        fields = ['id', 'name', 'owner']
+        fields = ['id', 'name', 'owner', 'url']
         depth = 2
         
     def get_owner(self, obj):
         return obj.owner.username
+    
+    def get_url(self, obj):
+        return reverse.reverse("some-random", kwargs={"id": obj.id}, request=self.context.get('request'))
