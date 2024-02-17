@@ -269,7 +269,8 @@ class SomeRandom(
 ):
     
     def get_queryset(self):
-        return SomeRandomTesting.objects.filter(owner = self.request.user)
+        return SomeRandomTesting.objects.all()
+        # return SomeRandomTesting.objects.filter(owner = self.request.user)
     
     
     serializer_class = SomeRandomSerializer
@@ -290,6 +291,7 @@ class SomeRandom(
 
 class SomeRandomDetails(generics.RetrieveAPIView):
     queryset = SomeRandomTesting.objects.all()
+    
     lookup_field = 'id'
     
     serializer_class = SomeRandomSerializer

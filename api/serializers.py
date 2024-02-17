@@ -2,6 +2,35 @@ from rest_framework import serializers, reverse
 from .models import *
 from .validators import *
 
+class DoSomeSerializerForUser(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='book-detail',
+        lookup_field = 'id',
+    )
+    class Meta:
+        model = SomeRandomTesting
+        fields = ['id', 'owner', 'url']
+    
+
+class UserSerializerForRandom(serializers.ModelSerializer):
+    
+    Full_name = serializers.SerializerMethodField()
+    other_random = serializers.SerializerMethodField(read_only = True)
+    
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'Full_name', 'other_random']
+        
+    
+    def get_Full_name(self, obj):
+        return f'{obj.first_name} {obj.last_name}'
+    
+    def get_other_random(self,obj):
+        # ! here obj is user (i don't know why tho)
+        return DoSomeSerializerForUser(obj.somerandomtesting_set.all()[:3], many=True, context = self.context).data
+    
+
+
 class StudentSerializer(serializers.ModelSerializer):
     my_father = serializers.SerializerMethodField(read_only=True)
     some_random_shit = serializers.SerializerMethodField(read_only=True)
@@ -117,7 +146,8 @@ class BookSerializer(serializers.ModelSerializer):
     
 class SomeRandomSerializer(serializers.ModelSerializer):
     
-    owner = serializers.SerializerMethodField(method_name='get_owner')
+    # owner = serializers.SerializerMethodField(method_name='get_owner')
+    owner = UserSerializerForRandom()
     url = serializers.SerializerMethodField(method_name='get_url')
     name = serializers.CharField(validators=[unique_name])
     
@@ -132,3 +162,5 @@ class SomeRandomSerializer(serializers.ModelSerializer):
     
     def get_url(self, obj):
         return reverse.reverse("some-random", kwargs={"id": obj.id}, request=self.context.get('request'))
+    
+    
